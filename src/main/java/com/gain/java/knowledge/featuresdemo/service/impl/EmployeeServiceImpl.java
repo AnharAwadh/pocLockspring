@@ -30,8 +30,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         Optional<EmployeeEntity> empOpt = employeeRepository.findByName(name);
 
         // stop for 5 seconds
-        wait(5000);
-
+//        wait(5000);
+  if(empOpt.get().getSalary()<employee.getBalance()){
+      throw new RuntimeException("test");
+  }
         if(empOpt.isPresent()) {
             EmployeeEntity empEntity = empOpt.get();
             if(StringUtils.isNotEmpty(employee.getName()))
@@ -42,8 +44,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 empEntity.setAge(employee.getAge());
             LOGGER.info("Added Balance : "+employee.getBalance());
             if(!ObjectUtils.isEmpty(employee.getBalance())) {
-                LOGGER.info("Total Balance : "+empEntity.getSalary() + employee.getBalance());
-                empEntity.setSalary(empEntity.getSalary() + employee.getBalance());
+                LOGGER.info("Total Balance : "+ Integer.parseInt(String.valueOf(empEntity.getSalary() - employee.getBalance())));
+                empEntity.setSalary(empEntity.getSalary() - employee.getBalance());
             }
             EmployeeEntity empEntityRes = employeeRepository.save(empEntity);
             return getEmployeeModelFromEntity(empEntityRes);
